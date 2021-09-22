@@ -1,0 +1,8 @@
+---
+- name: get libraspberrypi-bin
+  apt:
+    name: libraspberrypi-bin
+- name: add system config
+  lineinfile:
+    dest: /boot/firmware/config.txt
+    line: "start_x=1"

@@ -1,0 +1,7 @@
+---
+- name: make symbolic link of /etc/resolve.conf
+  file:
+    src: ../run/systemd/resolve/resolv.conf
+    dest: /etc/resolv.conf
+    state: link
+  register: resolv_link

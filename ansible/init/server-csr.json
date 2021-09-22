@@ -1,0 +1,29 @@
+{
+    "CN": "kubernetes",
+    "hosts": [
+        "127.0.0.1",
+        "10.96.0.1",
+        "192.168.3.10",
+        "192.168.3.11",
+        "192.168.3.12",
+        "192.168.3.13",
+        "master01",
+        "master02",
+        "master03",
+        "kubernetes",
+        "kubernetes.default",
+        "kubernetes.default.svc",
+        "kubernetes.default.svc.cluster",
+        "kubernetes.default.svc.cluster.local"
+    ],
+    "key": {
+        "algo": "rsa",
+        "size": 2048
+    },
+    "names": [
+        {
+            "C": "JP",
+            "L": "Tokyo"
+        }
+    ]
+}

@@ -1,0 +1,8 @@
+---
+- name: get glusterfs-client
+  apt:
+    name: glusterfs-client
+- name: makedir gluster-client mountpath
+  file:
+    path: /gvol
+    state: directory

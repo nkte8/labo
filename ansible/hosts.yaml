@@ -1,0 +1,38 @@
+all:
+  vars:
+    first_master: master01
+  children:
+    infra:
+      hosts:
+        infra01:
+          ansible_host: "192.168.3.250"
+    kubernetes:
+      vars:
+        k8s_compornent: ["kubelet", "kubectl", "kubeadm"]
+      children:
+        master:
+          hosts:
+            master01:
+              ansible_host: "192.168.3.11"
+            master02:
+              ansible_host: "192.168.3.12"
+            master03:
+              ansible_host: "192.168.3.13"
+        worker:
+          children:
+            ethernet:
+              children:
+                gluster:
+                  hosts:
+                    node01:
+                      ansible_host: "192.168.3.21"
+                    node02:
+                      ansible_host: "192.168.3.22"
+                    node03:
+                      ansible_host: "192.168.3.23"
+            wifi:
+              children:
+                camera:
+                  hosts:
+                    node04:
+                      ansible_host: "192.168.3.24"

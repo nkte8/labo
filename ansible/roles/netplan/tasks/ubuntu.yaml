@@ -1,0 +1,41 @@
+---
+- name: check ansible_setting enabled
+  stat:
+    path: /etc/netplan/90-ansible-config.yaml
+  register: ansibleconf_enable
+- block:
+    - name: present wifi configuration
+      copy:
+        src: files/wifi.yaml
+        dest: /etc/netplan/90-ansible-config.yaml
+        owner: root
+        group: root
+        mode: "u=rw,g=r,o=r"
+    - name: stat 50-cloud-init.yaml
+      stat:
+        path: /etc/netplan/50-cloud-init.yaml
+      register: first_conf
+    - name: disable first configuration
+      command: mv /etc/netplan/50-cloud-init.yaml /etc/netplan/50-cloud-init.yaml.bak
+      when: first_conf.stat.exists
+
+    - name: configure 90-ansible-config.yaml for masters
+      replace:
+        path: /etc/netplan/90-ansible-config.yaml
+        regexp: "{{ item.regexp }}"
+        replace: "{{ item.line }}"
+      with_items:
+        - { regexp: "__WIFI_SSID", line: "{{ global_wifi_ssid }}" }
+        - { regexp: "__WIFI_PASSWD", line: "{{ global_wifi_passwd }}" }
+        - { regexp: "__IPADDRESS", line: "{{ ansible_host }}/24" }
+        - { regexp: "__DOMAIN", line: "{{ global_zonename }}" }
+    - name: apply setting
+      shell: netplan apply
+      async: 1
+      poll: 0
+      ignore_errors: true
+    - name: wait for setting applied
+      wait_for_connection:
+        delay: 30
+        timeout: 300
+  when: not ansibleconf_enable.stat.exists

@@ -1,0 +1,15 @@
+#https://qiita.com/dingtianhongjie/items/a8ddc2d7f7b57291a13e
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metrics-server
+spec:
+  template:
+    spec:
+      containers:
+        - image: k8s.gcr.io/metrics-server/metrics-server:v0.5.0
+          command:
+            - /metrics-server
+            - --kubelet-insecure-tls
+            - --kubelet-preferred-address-types=InternalIP
+          name: metrics-server

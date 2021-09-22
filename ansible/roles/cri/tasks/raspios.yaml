@@ -1,0 +1,42 @@
+---
+- name: add docker gpg-key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+- name: get lsb_release -cs
+  shell: lsb_release -cs
+  changed_when: false
+  register: lsb_name
+- name: add docker(containerd) repository
+  apt_repository:
+    repo: deb [arch=arm64] https://download.docker.com/linux/debian {{ lsb_name.stdout }} stable
+    state: present
+    filename: containerd
+- name: add container backend
+  apt:
+    update_cache: yes
+    name: containerd.io
+- block:
+    - name: present /etc/containerd directory
+      file:
+        dest: /etc/containerd
+        state: directory
+    - name: create containerd config
+      shell: |-
+        cd /etc/containerd/
+        [[ -e config.toml ]] && mv config.toml config.toml.old
+        containerd config default > config.toml
+        diff config.toml config.toml.old > /dev/null
+      register: config
+      changed_when: config.rc == 1
+      failed_when: config.rc == 2
+    - name: restart containerd
+      service:
+        name: containerd
+        state: restarted
+      when: config.changed
+
+- name: enable containerd
+  service:
+    name: containerd
+    enabled: yes

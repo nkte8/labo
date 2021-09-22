@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: container-builder
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      name: container-builder
+  template:
+    metadata:
+      labels:
+        name: container-builder
+    spec:
+      nodeSelector:
+        interface: ethernet
+      initContainers:
+        - name: init-runner
+          image: gitlab/gitlab-runner:latest
+          command:
+            - gitlab-runner
+            - register
+            - --non-interactive
+            - --url=http://gitlab.neko.lab/
+            - --registration-token=gitlabtoken
+            - --description=container-builder
+            - --tag-list=docker
+            - --executor=docker
+            - --docker-image=docker:latest
+            - --docker-network-mode=host
+            - --docker-volumes=/var/run/docker.sock:/var/run/docker.sock
+            # - --docker-extra-hosts=gitlab.neko.lab:192.168.3.250
+          volumeMounts:
+            - name: config
+              readOnly: false
+              mountPath: /etc/gitlab-runner/
+      containers:
+        - image: gitlab/gitlab-runner:latest
+          name: gitlab-runner
+          ports:
+            - containerPort: 80
+              name: http
+            - containerPort: 443
+              name: https
+          volumeMounts:
+            - name: config
+              mountPath: /etc/gitlab-runner/
+              readOnly: true
+            - name: socket
+              mountPath: /var/run/docker.sock
+              readOnly: true
+      volumes:
+        - name: config
+          emptyDir: {}
+        - name: socket
+          hostPath:
+            path: /var/run/docker.sock
+      restartPolicy: Always

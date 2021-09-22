@@ -1,0 +1,5 @@
+zone "__ZONE_NAME" IN {
+    type master;
+    file "/var/cache/bind/__ZONE_NAME.zone";
+    allow-update { none; };
+};

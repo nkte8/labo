@@ -1,0 +1,10 @@
+- name: get keepalived
+  apt:
+    name: keepalived
+- name: present keepalived.conf
+  copy:
+    src: files/base.conf
+    dest: /etc/keepalived/keepalived.conf
+    owner: root
+    group: root
+    mode: "u=rw,g=r,o=r"

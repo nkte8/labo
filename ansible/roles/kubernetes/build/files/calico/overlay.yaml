@@ -1,0 +1,44 @@
+# Source: calico/templates/calico-config.yaml
+# This ConfigMap is used to configure a self-hosted Calico installation.
+# kind: ConfigMap
+# apiVersion: v1
+# metadata:
+#   name: calico-config
+#   namespace: kube-system
+# data:
+#   calico_backend: "vxlan"
+#   # Configure the MTU to use for workload interfaces and tunnels.
+#   # By default, MTU is auto-detected, and explicitly setting this field should not be required.
+#   # You can override auto-detection by providing a non-zero value.
+#   veth_mtu: "1440"
+---
+kind: DaemonSet
+apiVersion: apps/v1
+metadata:
+  name: calico-node
+  namespace: kube-system
+spec:
+  template:
+    spec:
+      containers:
+        - name: calico-node
+          env:
+            - name: CALICO_IPV4POOL_CIDR
+              value: "10.244.0.0/16"
+            # - name: CALICO_IPV4POOL_IPIP
+            #   value: "Never"
+            # - name: CALICO_IPV4POOL_VXLAN
+            #   value: "Always"
+            # # Auto-detection method.
+            - name: IP_AUTODETECTION_METHOD
+              value: "interface=wlan.*,eth.*"
+          # livenessProbe:
+          #   exec:
+          #     command:
+          #       - /bin/calico-node
+          #       - -felix-live
+          # readinessProbe:
+          #   exec:
+          #     command:
+          #       - /bin/calico-node
+          #       - -felix-ready

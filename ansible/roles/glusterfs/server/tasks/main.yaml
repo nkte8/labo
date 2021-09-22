@@ -1,0 +1,26 @@
+---
+- name: get glusterfs-server
+  apt:
+    name: glusterfs-server
+- name: enable glusterfs-server
+  service:
+    name: glusterd
+    state: started
+    enabled: yes
+- name: makedir glusterd mountpath
+  file:
+    path: /gluster
+    state: directory
+
+- name: get xfs volume for gluster brick
+  shell: blkid | grep xfs | awk -F\" '{ print $2 }'
+  register: uuid
+
+- name: mount xfs volume
+  mount:
+    name: "/gluster"
+    src: "UUID={{ uuid.stdout }}"
+    fstype: "xfs"
+    opts: defaults,nofail
+    state: mounted
+  when: uuid.stdout != ""

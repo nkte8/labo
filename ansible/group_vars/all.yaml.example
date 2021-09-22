@@ -1,0 +1,5 @@
+global_wifi_ssid: <Wifi接続するSSIDを入力>
+global_wifi_passwd: <Wifi接続するPassword（暗号化済）を入力>
+global_k8sversion: <1.21.4 のような、k8sコンポーネントのバージョンを入力>
+global_zonename: <DNSに設定するドメイン名（example.com）>
+ansible_ssh_user: <ansibleでsshするユーザー名>

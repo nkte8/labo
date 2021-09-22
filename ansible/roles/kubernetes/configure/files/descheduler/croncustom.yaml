@@ -1,0 +1,7 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: descheduler-cronjob
+spec:
+  schedule: "0 */1 * * *"
+  successfulJobsHistoryLimit: 5

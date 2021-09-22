@@ -1,0 +1,23 @@
+---
+- name: check camera isenabled
+  shell: |
+    vcgencmd get_camera
+  register: check_camera
+  changed_when: check_camera.stdout != "supported=1 detected=1"
+- block:
+    - name: reboot for apply firmware config.txt
+      shell: reboot
+      async: 1
+      poll: 0
+      ignore_errors: true
+    - name: wait for reboot
+      wait_for_connection:
+        delay: 30
+        timeout: 300
+    - name: check camera enabled
+      shell: |
+        vcgencmd get_camera
+      register: check_camera
+      failed_when: check_camera.stdout != "supported=1 detected=1"
+      changed_when: false
+  when: check_camera.changed

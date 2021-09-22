@@ -1,0 +1,74 @@
+---
+- name: check gitlab installed
+  package_facts:
+    manager: auto
+## gitlabがインストール済みでない場合のみ実行
+- block:
+    - name: get gitlab context
+      uri:
+        url: https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh
+        return_content: yes
+      register: gitlab_script
+    - name: run gitlab script
+      shell:
+        cmd: bash
+        stdin: "{{ gitlab_script.content }}"
+    - name: install gitlab
+      apt:
+        name: gitlab-ce=13.11.4-ce.0
+        update_cache: yes
+  when: '"gitlab-ce" not in ansible_facts.packages'
+- name: present gitlab.rb as temp
+  copy:
+    src: gitlab.rb
+    dest: /etc/gitlab/gitlab.rb.tmp
+    owner: root
+    group: root
+# バックアップデバイスの探索
+- block:
+    - name: get backup volume for gluster brick
+      shell: blkid | grep /dev/sda | awk -F\" '{ print $2 }'
+      register: uuid
+      changed_when: uuid.stdout != ""
+    - block:
+        - name: create mountpoint for backup
+          file:
+            path: /bak
+            state: directory
+        - name: mount backup volume
+          mount:
+            name: "/bak"
+            src: "UUID={{ uuid.stdout }}"
+            fstype: "ext4"
+            opts: defaults,nofail
+            state: mounted
+      when: uuid.changed
+    - name: delete backup_path line from gitlab.rb
+      lineinfile:
+        dest: "/etc/gitlab/gitlab.rb.tmp"
+        regexp: "^gitlab_rails.'backup_path'."
+        state: absent
+      when: not uuid.changed
+
+- name: edit gitlab.rb zone-info
+  replace:
+    path: /etc/gitlab/gitlab.rb.tmp
+    regexp: "__ZONE_NAME"
+    replace: "{{ global_zonename }}"
+
+- name: check gitlab.rb renewed
+  shell: diff /etc/gitlab/gitlab.rb.tmp /etc/gitlab/gitlab.rb > /dev/null
+  register: gitlab_rb
+  changed_when: gitlab_rb.rc == 1
+  failed_when: gitlab_rb.rc == 2
+## リモートとローカルのrbが異なる場合はreconfigure
+- block:
+    - name: renew gitlab.rb
+      shell: cp /etc/gitlab/gitlab.rb.tmp /etc/gitlab/gitlab.rb
+    - name: gitlab reconfigure
+      shell: gitlab-ctl reconfigure
+  when: gitlab_rb.changed
+- name: clear temp file
+  file:
+    path: /etc/gitlab/gitlab.rb.tmp
+    state: absent

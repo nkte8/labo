@@ -1,0 +1,10 @@
+.DS_Store
+**/.DS_Store
+ansible/admin.conf
+ansible/init/*.csr
+ansible/roles/kubernetes/build/files/pki/*
+ansible/group_vars/*.yaml
+ansible/roles/bind9/files/named.zone
+init-raspbian/wpa_supplicant.conf
+init-ubuntu/network-config
+init-ubuntu/user-data

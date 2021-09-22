@@ -1,0 +1,7 @@
+---
+# raspberrypi os swap managed by dphys-swapfile
+- name: disable dphys-swapfile
+  service:
+    name: dphys-swapfile
+    enabled: no
+    state: stopped

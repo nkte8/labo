@@ -1,0 +1,19 @@
+acl internal-network {
+    192.168.3.0/24;
+    127.0.0.0/8;
+};
+acl "dns-servers" { 
+    192.168.3.250; 
+    127.0.0.1; 
+};
+options {
+    directory "/var/cache/bind";
+    allow-query { internal-network; };
+    allow-recursion { internal-network; };
+    allow-transfer { dns-servers; };
+    recursion yes;
+    forwarders{ 8.8.8.8; 8.8.4.4; };
+    dnssec-validation auto;
+
+    listen-on-v6 { any; };
+};

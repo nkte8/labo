@@ -1,0 +1,11 @@
+---
+- name: configure keepalived.conf for glusterfs-server
+  replace:
+    path: /etc/keepalived/keepalived.conf
+    regexp: "{{ item.regexp }}"
+    replace: "{{ item.line }}"
+  with_items:
+    - { regexp: "__INSTANCE_NAME", line: "VI_2" }
+    - { regexp: "__ROUTER_ID", line: "52" }
+    - { regexp: "__VIP_ADDR", line: "192.168.3.20/24" }
+    - { regexp: "__PRIORITY", line: "50" }

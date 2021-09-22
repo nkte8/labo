@@ -1,0 +1,52 @@
+- hosts: all
+  become: true
+  roles:
+    - common
+    - resolv
+
+- hosts: wifi
+  become: true
+  roles:
+    - netplan
+
+- hosts: camera
+  become: true
+  roles:
+    - camera
+
+- hosts: kubernetes
+  become: true
+  roles:
+    - glusterfs/client
+    - cri
+
+- hosts: master
+  become: true
+  roles:
+    - keepalive
+
+- hosts: gluster
+  become: true
+  roles:
+    - keepalive
+    - glusterfs/server
+
+## DNSサーバ
+- hosts: infra
+  become: true
+  roles:
+    - bind9
+    - gitlab
+
+- hosts: all
+  become: true
+  roles:
+    - kubernetes/install
+- hosts: kubernetes
+  become: true
+  roles:
+    - kubernetes/build
+- hosts: master
+  become: true
+  roles:
+    - { role: kubernetes/configure, when: "inventory_hostname == first_master" }

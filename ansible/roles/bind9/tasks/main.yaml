@@ -1,0 +1,39 @@
+---
+- name: get bind9
+  apt:
+    name: "{{ item }}"
+  with_items:
+    - bind9
+    - bind9utils
+- name: present named.conf.local
+  copy:
+    src: named.conf.local
+    dest: /etc/bind/
+    owner: bind
+    group: bind
+    mode: "u=rw,g=r,o=r"
+- name: edit named.conf.local zone-info for {{ global_zonename }}
+  replace:
+    path: /etc/bind/named.conf.local
+    regexp: "__ZONE_NAME"
+    replace: "{{ global_zonename }}"
+
+- name: present named.conf.options
+  copy:
+    src: named.conf.options
+    dest: /etc/bind/
+    owner: bind
+    group: bind
+    mode: "u=rw,g=r,o=r"
+- name: present named.zone
+  copy:
+    src: named.zone
+    dest: /var/cache/bind/{{ global_zonename }}.zone
+    owner: bind
+    group: bind
+    mode: "u=rw,g=r,o=r"
+- name: enable named
+  service:
+    name: named
+    state: restarted
+    enabled: yes

@@ -1,0 +1,34 @@
+---
+- block:
+    - name: swapoff
+      shell: swapoff -a
+    - name: add kubernetes gpg-key
+      apt_key:
+        url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+        state: present
+    - name: add kubernetes-xenial repository
+      apt_repository:
+        repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
+        state: present
+        filename: kubernetes
+    - name: unhold k8s compornent
+      dpkg_selections:
+        name: "{{ item }}"
+        selection: install
+      with_items: "{{ k8s_compornent }}"
+    - name: install k8s compornent
+      apt:
+        update_cache: yes
+        name: "{{ item }}={{ global_k8sversion }}-00"
+      with_items: "{{ k8s_compornent }}"
+    - name: hold k8s compornent
+      dpkg_selections:
+        name: "{{ item }}"
+        selection: hold
+      with_items: "{{ k8s_compornent }}"
+    - name: enable kubernetes
+      service:
+        name: kubelet
+        enabled: yes
+      when: "'kubelet' in k8s_compornent"
+  when: "k8s_compornent is defined"

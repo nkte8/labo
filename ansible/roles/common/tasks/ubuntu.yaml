@@ -1,0 +1,24 @@
+---
+- name: set firmware configs
+  lineinfile:
+    dest: /boot/firmware/config.txt
+    line: "{{ item }}"
+  with_items:
+    - temp_limit=70
+    - gpu_mem=32
+  register: firm_configs
+- block:
+    - name: reboot for apply firmware config.txt
+      shell: reboot
+      async: 1
+      poll: 0
+      ignore_errors: true
+      changed_when: false
+    - name: wait for reboot
+      wait_for_connection:
+        delay: 30
+        timeout: 300
+  when: firm_configs.changed
+- name: update packages info
+  apt:
+    update_cache: yes

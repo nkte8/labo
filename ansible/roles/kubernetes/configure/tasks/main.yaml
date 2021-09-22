@@ -1,0 +1,54 @@
+---
+- name: check kubectl enabled
+  shell: |
+    kubectl get node
+  register: kubectl_check
+  failed_when: kubectl_check.rc != 0
+
+- block:
+    - name: set storage=gluster label
+      shell: |
+        kubectl label nodes "{{ item }}" storage=gluster
+      with_items: "{{ groups['gluster'] }}"
+      register: label
+      failed_when: label.rc >= 2
+    - name: set interface=ethernet label
+      shell: |
+        kubectl label nodes "{{ item }}" interface=ethernet
+      with_items: "{{ groups['ethernet'] }}"
+      register: label
+      failed_when: label.rc >= 2
+    - name: set device=camera label
+      shell: |
+        kubectl label nodes "{{ item }}" device=camera
+      with_items: "{{ groups['camera'] }}"
+      register: label
+      failed_when: label.rc >= 2
+- name: present configure files
+  copy:
+    src: ./
+    dest: ~/manifests
+- block:
+    - name: metallb check
+      shell: |-
+        kubectl get -k ~/manifests/metallb
+      register: metallb
+      failed_when: metallb.rc >= 2
+    - name: apply metallb to cluster
+      shell: |-
+        kubectl apply -k ~/manifests/metallb
+        kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
+      when: metallb.rc != 0
+- block:
+    - name: apply gitlab-runner to cluster
+      shell: |-
+        kubectl apply -k ~/manifests/gitlab-runner
+    - name: apply glusterfs-endpoints to cluster
+      shell: |-
+        kubectl apply -f ~/manifests/glusterfs-endpoint.yaml
+    - name: apply descheduler to cluster
+      shell: |-
+        kubectl apply -k ~/manifests/descheduler
+    - name: apply metrics-server to cluster
+      shell: |-
+        kubectl apply -k ~/manifests/metrics-server

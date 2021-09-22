@@ -1,0 +1,24 @@
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    eth0:
+      dhcp4: false
+      dhcp6: false
+  wifis:
+    wlan0:
+      optional: true
+      dhcp4: false
+      dhcp6: false
+      access-points:
+        "__WIFI_SSID":
+          hidden: true
+          password: "__WIFI_PASSWD"
+      addresses:
+        - __IPADDRESS
+      gateway4: 192.168.3.1
+      nameservers:
+        search: [__DOMAIN]
+        addresses:
+          - 192.168.3.250
+          - 8.8.8.8

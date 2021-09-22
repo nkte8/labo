@@ -1,0 +1,23 @@
+---
+- name: add container backend
+  apt:
+    name: docker.io
+- block:
+    - name: present daemon.json
+      copy:
+        src: daemon.json
+        dest: /etc/docker/
+        owner: root
+        group: root
+        mode: "u=rw,g=r,o=r"
+    - name: edit daemon.json zone-info for {{ global_zonename }}
+      replace:
+        path: /etc/docker/daemon.json
+        regexp: "__ZONE_NAME"
+        replace: "{{ global_zonename }}"
+- name: start docker-daemon
+  systemd:
+    name: docker
+    state: restarted
+    daemon_reload: yes
+    enabled: yes

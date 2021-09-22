@@ -1,0 +1,9 @@
+---
+- name: install openresolv
+  apt:
+    name: openresolv
+- name: start systemd-resolved
+  service:
+    name: systemd-resolved
+    state: started
+    enabled: yes

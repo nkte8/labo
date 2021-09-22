@@ -1,0 +1,21 @@
+---
+- name: <include playbook global>
+  include: "global.yaml"
+
+- name: <include playbook master group>
+  include: "master.yaml"
+  when: "'master' in group_names"
+
+- name: <include playbook gluster-server group>
+  include: "gluster.yaml"
+  when: "'gluster' in group_names"
+
+- name: <include playbook infra group>
+  include: "infra.yaml"
+  when: "'infra' in group_names"
+
+- name: enable keepalived
+  service:
+    name: keepalived
+    state: restarted
+    enabled: yes
