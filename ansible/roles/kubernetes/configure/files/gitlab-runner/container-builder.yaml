@@ -45,10 +45,14 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /etc/gitlab-runner/
-              readOnly: true
+              readOnly: false
             - name: socket
               mountPath: /var/run/docker.sock
               readOnly: true
+          lifecycle:
+            preStop:
+              exec:
+                command: ["gitlab-runner", "unregister", "--all-runners"]
       volumes:
         - name: config
           emptyDir: {}
