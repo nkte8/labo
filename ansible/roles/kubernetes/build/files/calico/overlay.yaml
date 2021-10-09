@@ -25,20 +25,20 @@ spec:
           env:
             - name: CALICO_IPV4POOL_CIDR
               value: "10.244.0.0/16"
-            # - name: CALICO_IPV4POOL_IPIP
-            #   value: "Never"
-            # - name: CALICO_IPV4POOL_VXLAN
-            #   value: "Always"
-            # # Auto-detection method.
+            - name: CALICO_IPV4POOL_IPIP
+              value: "Never"
+            - name: CALICO_IPV4POOL_VXLAN
+              value: "Always"
+            # Auto-detection method.
             - name: IP_AUTODETECTION_METHOD
               value: "interface=wlan.*,eth.*"
-          # livenessProbe:
-          #   exec:
-          #     command:
-          #       - /bin/calico-node
-          #       - -felix-live
-          # readinessProbe:
-          #   exec:
-          #     command:
-          #       - /bin/calico-node
-          #       - -felix-ready
+          livenessProbe:
+            exec:
+              command:
+                - /bin/calico-node
+                - -felix-live
+          readinessProbe:
+            exec:
+              command:
+                - /bin/calico-node
+                - -felix-ready
