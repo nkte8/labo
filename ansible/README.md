@@ -1,6 +1,6 @@
 # labo/ansible について
 
-kubernetesクラスタ & DNSサーバ & gitlab & gluster 等をansibleで初期構築するplaybookです。
+kubernetesクラスタ & DNSサーバ & gitlab & gluster等をansibleで初期構築するplaybookです。
 
 # 実行方法
 
