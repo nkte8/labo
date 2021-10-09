@@ -4,7 +4,7 @@
   stat:
     path: /var/lib/kubelet/config.yaml
   register: kubelet_result
-
+  changed_when: kubelet_result.stat.exists == false
 ## master block
 - block:
     - block:
@@ -56,10 +56,12 @@
           shell: |
             kubeadm token create --print-join-command
           register: join_command
+          changed_when: false
         - name: publish kubeadm certificate keys
           shell: |-
             kubeadm init phase upload-certs --upload-certs 2>/dev/null | tail -1
           register: cert_data
+          changed_when: false
         - name: ready kubeadm join for cluster
           set_fact:
             worker_join: "{{ join_command.stdout }}"

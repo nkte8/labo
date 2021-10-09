@@ -1,5 +1,5 @@
 ---
-- name: add docker gpg-key
+- name: add containerd gpg-key
   apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg
     state: present
@@ -7,7 +7,7 @@
   shell: lsb_release -cs
   changed_when: false
   register: lsb_name
-- name: add docker(containerd) repository
+- name: add containerd repository
   apt_repository:
     repo: deb [arch=arm64] https://download.docker.com/linux/debian {{ lsb_name.stdout }} stable
     state: present
@@ -21,22 +21,22 @@
       file:
         dest: /etc/containerd
         state: directory
-    - name: create containerd config
-      shell: |-
-        cd /etc/containerd/
-        [[ -e config.toml ]] && mv config.toml config.toml.old
-        containerd config default > config.toml
-        diff config.toml config.toml.old > /dev/null
-      register: config
-      changed_when: config.rc == 1
-      failed_when: config.rc == 2
-    - name: restart containerd
-      service:
-        name: containerd
-        state: restarted
-      when: config.changed
-
-- name: enable containerd
-  service:
+- block:
+    - name: present config.toml
+      copy:
+        src: config.toml
+        dest: /etc/containerd/
+        owner: root
+        group: root
+        mode: "u=rw,g=r,o=r"
+    - name: edit config.toml zone-info for {{ global_zonename }}
+      replace:
+        path: /etc/containerd/config.toml
+        regexp: "__ZONE_NAME"
+        replace: "{{ global_zonename }}"
+- name: start containerd
+  systemd:
     name: containerd
+    state: restarted
+    daemon_reload: yes
     enabled: yes
