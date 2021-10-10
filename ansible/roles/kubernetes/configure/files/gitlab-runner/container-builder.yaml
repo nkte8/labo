@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: container-builder
 spec:
-  replicas: 2
+  replicas: 4
   selector:
     matchLabels:
       name: container-builder
