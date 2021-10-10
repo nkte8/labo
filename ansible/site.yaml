@@ -4,17 +4,6 @@
     - common
     - resolv
 
-- hosts: wifi
-  become: true
-  roles:
-    - netplan
-
-- hosts: kubernetes
-  become: true
-  roles:
-    - glusterfs/client
-    - cri
-
 - hosts: master
   become: true
   roles:
@@ -33,18 +22,20 @@
     - bind9
     - gitlab
 
-- hosts: all
-  become: true
-  roles:
-    - kubernetes/install
 - hosts: kubernetes
   become: true
   roles:
+    - glusterfs/client
+    - docker
+    - kubernetes/install
     - kubernetes/build
-- hosts: master
+    - { role: kubernetes/configure, when: "inventory_hostname == first_master" }
+
+- hosts: edge
   become: true
   roles:
-    - { role: kubernetes/configure, when: "inventory_hostname == first_master" }
+    - network
+    - docker
 
 - hosts: camera
   become: true

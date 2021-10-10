@@ -12,12 +12,12 @@
       with_items: "{{ groups['gluster'] }}"
       register: label
       failed_when: label.rc >= 2
-    - name: set interface=ethernet label
-      shell: |
-        kubectl label nodes "{{ item }}" interface=ethernet
-      with_items: "{{ groups['ethernet'] }}"
-      register: label
-      failed_when: label.rc >= 2
+    # - name: set interface=ethernet label
+    #   shell: |
+    #     kubectl label nodes "{{ item }}" interface=ethernet
+    #   with_items: "{{ groups['ethernet'] }}"
+    #   register: label
+    #   failed_when: label.rc >= 2
     - name: set device=camera label
       shell: |
         kubectl label nodes "{{ item }}" device=camera

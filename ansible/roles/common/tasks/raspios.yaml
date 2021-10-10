@@ -1,15 +1,4 @@
 ---
-- name: add the overlay module
-  modprobe:
-    name: overlay
-    state: present
-
-- name: create containerd modulelist
-  lineinfile:
-    create: yes
-    path: /etc/modules-load.d/containerd.conf
-    line: "overlay"
-
 - name: set firmware configs
   lineinfile:
     dest: /boot/config.txt

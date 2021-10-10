@@ -1,0 +1,7 @@
+---
+- include: "global.yaml"
+# - include: "ubuntu.yaml"
+#   when: "ansible_distribution == 'Ubuntu'"
+
+# - include: "raspios.yaml"
+#   when: "ansible_distribution == 'Debian'"
