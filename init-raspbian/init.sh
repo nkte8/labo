@@ -44,7 +44,8 @@ sudo mkdir  /home/${USERNAME}/.ssh
 echo ${PUBKEY} | sudo tee /home/${USERNAME}/.ssh/authorized_keys
 echo '${USERNAME} ALL=(ALL) NOPASSWD: ALL' | sudo tee /etc/sudoers.d/099_${USERNAME}-nopasswd
 sudo chmod 440 /etc/sudoers.d/099_${USERNAME}-nopasswd
-sed -i -e 's/$/ cgroup_enable=memory cgroup_memory=1 net.ifnames=0 dwc_otg.lpm_enable=0/' /boot/cmdline.txt
+sudo sed -i -e 's/$/ cgroup_enable=memory cgroup_memory=1 net.ifnames=0 dwc_otg.lpm_enable=0/' /boot/cmdline.txt
+sudo passwd -d pi
 sudo reboot"
 
 echo "you can access 'ssh ${USERNAME}@${W_IP}' with public-key ${W_PUB_PATH}"
