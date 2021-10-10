@@ -8,3 +8,16 @@
     owner: root
     group: root
     mode: "u=rw,g=r,o=r"
+
+- name: sysctl net.ipv4.ip_nonlocal_bind
+  sysctl:
+    name: net.ipv4.ip_nonlocal_bind
+    value: "1"
+    state: present
+    sysctl_file: /etc/sysctl.d/keepalived.conf
+- name: sysctl net.ipv4.ip_forward
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: "1"
+    state: present
+    sysctl_file: /etc/sysctl.d/keepalived.conf

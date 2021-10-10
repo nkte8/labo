@@ -3,42 +3,6 @@
   hostname:
     name: "{{ inventory_hostname }}"
 
-- name: add the br_netfilter module
-  modprobe:
-    name: br_netfilter
-    state: present
-- name: create common modulelist
-  lineinfile:
-    create: yes
-    path: /etc/modules-load.d/common.conf
-    line: "br_netfilter"
-
-- name: sysctl net.ipv4.ip_nonlocal_bind
-  sysctl:
-    name: net.ipv4.ip_nonlocal_bind
-    value: "1"
-    state: present
-    sysctl_file: /etc/sysctl.d/k8s.conf
-- name: sysctl net.ipv4.ip_forward
-  sysctl:
-    name: net.ipv4.ip_forward
-    value: "1"
-    state: present
-    sysctl_file: /etc/sysctl.d/k8s.conf
-- name: sysctl net.bridge.bridge-nf-call-iptables
-  sysctl:
-    name: net.bridge.bridge-nf-call-iptables
-    value: "1"
-    state: present
-    sysctl_file: /etc/sysctl.d/k8s.conf
-- name: sysctl net.bridge.bridge-nf-call-ip6tables
-  sysctl:
-    name: net.bridge.bridge-nf-call-ip6tables
-    value: "1"
-    state: present
-    reload: true
-    sysctl_file: /etc/sysctl.d/k8s.conf
-
 - name: set sshd_config PasswordAuthentication no
   replace:
     path: /etc/ssh/sshd_config

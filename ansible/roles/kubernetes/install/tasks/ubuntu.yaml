@@ -1,0 +1,11 @@
+---
+- name: get swap state
+  shell: swapon -v
+  register: swap_state
+  check_mode: false
+  changed_when: false
+
+- name: swap off
+  shell: swapoff -a
+  when: swap_state.stdout != ''
+  changed_when: false

@@ -1,34 +1,61 @@
 ---
-- block:
-    - name: swapoff
-      shell: swapoff -a
-    - name: add kubernetes gpg-key
-      apt_key:
-        url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
-        state: present
-    - name: add kubernetes-xenial repository
-      apt_repository:
-        repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
-        state: present
-        filename: kubernetes
-    - name: unhold k8s compornent
-      dpkg_selections:
-        name: "{{ item }}"
-        selection: install
-      with_items: "{{ k8s_compornent }}"
-    - name: install k8s compornent
-      apt:
-        update_cache: yes
-        name: "{{ item }}={{ global_k8sversion }}-00"
-      with_items: "{{ k8s_compornent }}"
-    - name: hold k8s compornent
-      dpkg_selections:
-        name: "{{ item }}"
-        selection: hold
-      with_items: "{{ k8s_compornent }}"
-    - name: enable kubernetes
-      service:
-        name: kubelet
-        enabled: yes
-      when: "'kubelet' in k8s_compornent"
-  when: "k8s_compornent is defined"
+- name: add the br_netfilter module
+  modprobe:
+    name: br_netfilter
+    state: present
+- name: create common modulelist
+  lineinfile:
+    create: yes
+    path: /etc/modules-load.d/common.conf
+    line: "br_netfilter"
+- name: sysctl net.bridge.bridge-nf-call-iptables
+  sysctl:
+    name: net.bridge.bridge-nf-call-iptables
+    value: "1"
+    state: present
+    sysctl_file: /etc/sysctl.d/k8s.conf
+- name: sysctl net.bridge.bridge-nf-call-ip6tables
+  sysctl:
+    name: net.bridge.bridge-nf-call-ip6tables
+    value: "1"
+    state: present
+    reload: true
+    sysctl_file: /etc/sysctl.d/k8s.conf
+
+- name: add kubernetes gpg-key
+  apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    state: present
+- name: add kubernetes-xenial repository
+  apt_repository:
+    repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
+    state: present
+    filename: kubernetes
+- name: unhold k8s compornent
+  dpkg_selections:
+    name: "{{ item }}"
+    selection: install
+  with_items:
+    - kubelet
+    - kubectl
+    - kubeadm
+- name: install k8s compornent
+  apt:
+    update_cache: yes
+    name: "{{ item }}={{ global_k8sversion }}-00"
+  with_items:
+    - kubelet
+    - kubectl
+    - kubeadm
+- name: hold k8s compornent
+  dpkg_selections:
+    name: "{{ item }}"
+    selection: hold
+  with_items:
+    - kubelet
+    - kubectl
+    - kubeadm
+- name: enable kubernetes
+  service:
+    name: kubelet
+    enabled: yes

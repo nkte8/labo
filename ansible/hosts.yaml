@@ -7,8 +7,6 @@ all:
         infra01:
           ansible_host: "192.168.3.250"
     kubernetes:
-      vars:
-        k8s_compornent: ["kubelet", "kubectl", "kubeadm"]
       children:
         master:
           hosts:
@@ -20,20 +18,17 @@ all:
               ansible_host: "192.168.3.13"
         worker:
           children:
-            ethernet:
-              children:
-                gluster:
-                  hosts:
-                    node01:
-                      ansible_host: "192.168.3.21"
-                    node02:
-                      ansible_host: "192.168.3.22"
-                    node03:
-                      ansible_host: "192.168.3.23"
-            wifi:
-              children:
-                camera:
-                  hosts:
-                    node04:
-                      ansible_host: "192.168.3.24"
-                      use_swapfile: true
+            gluster:
+              hosts:
+                node01:
+                  ansible_host: "192.168.3.21"
+                node02:
+                  ansible_host: "192.168.3.22"
+                node03:
+                  ansible_host: "192.168.3.23"
+    edge:
+      children:
+        camera:
+          hosts:
+            edge01:
+              ansible_host: "192.168.3.31"
