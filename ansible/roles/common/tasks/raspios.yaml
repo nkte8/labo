@@ -18,7 +18,6 @@
     - temp_limit=70
     - dtparam=act_led_trigger=default-on
     - dtparam=pwr_led_trigger=none
-    - gpu_mem=32
     - arm_freq=900
     - over_voltage=5
   register: firm_configs

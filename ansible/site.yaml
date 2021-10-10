@@ -9,11 +9,6 @@
   roles:
     - netplan
 
-- hosts: camera
-  become: true
-  roles:
-    - camera
-
 - hosts: kubernetes
   become: true
   roles:
@@ -50,3 +45,8 @@
   become: true
   roles:
     - { role: kubernetes/configure, when: "inventory_hostname == first_master" }
+
+- hosts: camera
+  become: true
+  roles:
+    - camera
