@@ -4,5 +4,7 @@
     dest: /boot/config.txt
     line: "{{ item }}"
   with_items:
-    - "start_x=1"
+    - start_x=1
     - disable_camera_led=1
+    - gpu_mem=128
+  register: camera_firmconf

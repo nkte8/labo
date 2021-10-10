@@ -5,7 +5,8 @@
     line: "{{ item }}"
   with_items:
     - temp_limit=70
-    - gpu_mem=32
+    - arm_freq=1200
+    - over_voltage=5
   register: firm_configs
 - block:
     - name: reboot for apply firmware config.txt

@@ -36,3 +36,4 @@ all:
                   hosts:
                     node04:
                       ansible_host: "192.168.3.24"
+                      use_swapfile: true

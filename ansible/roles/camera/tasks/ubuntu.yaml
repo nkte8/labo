@@ -5,4 +5,8 @@
 - name: add system config
   lineinfile:
     dest: /boot/firmware/config.txt
-    line: "start_x=1"
+    line: "{{ item }}"
+  with_items:
+    - start_x=1
+    - gpu_mem=128
+  register: camera_firmconf

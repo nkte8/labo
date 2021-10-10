@@ -20,4 +20,4 @@
       register: check_camera
       failed_when: check_camera.stdout != "supported=1 detected=1"
       changed_when: false
-  when: check_camera.changed
+  when: check_camera.changed or (camera_firmconf is defined and camera_firmconf.changed)
