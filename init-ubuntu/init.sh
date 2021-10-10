@@ -5,7 +5,7 @@ read -p "skip[y/n]: " skip
 if [[ ${skip} != "y" ]];then 
     [[ ${W_IP:=} == "" ]] && read -p "W_IP: " W_IP
     UNAME=`whoami`
-    PUBKEY=$(cat `find .ssh -name '*.pub' | head -n 1`)
+    PUBKEY=$(cat `find ~/.ssh -name '*.pub' | head -n 1`)
 
     sed "s/__IP_ADDRESS/${W_IP}/g" ./network-config.base > ./network-config
     sed "s/__USERNAME/${UNAME}/g" ./user-data.base > ./user-data
