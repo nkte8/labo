@@ -25,7 +25,7 @@
     repo: deb [arch=arm64] https://download.docker.com/linux/{{ dist_slug }} {{ lsb_name.stdout }} stable
     state: present
     filename: containerd
-- name: add container backend
+- name: add containerd.io
   apt:
     update_cache: yes
     name: containerd.io
@@ -50,6 +50,6 @@
 - name: start containerd
   systemd:
     name: containerd
-    state: restarted
+    state: started
     daemon_reload: yes
     enabled: yes
