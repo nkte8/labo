@@ -30,7 +30,7 @@ read -p "IP address... W_IP: " W_IP
 echo "login with init password 'raspberry'"
 
 USERNAME=`whoami`
-PUBKEY=$(cat `find .ssh -name '*.pub' | head -n 1`)
+PUBKEY=$(cat `find ~/.ssh -name '*.pub' | head -n 1`)
 ssh -t -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null pi@raspberrypi.local \
 "sudo apt-get update --allow-releaseinfo-change
 sudo apt-get upgrade -y
