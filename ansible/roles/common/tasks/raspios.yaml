@@ -26,8 +26,9 @@
 - name: update packages releaseinfo
   shell: apt-get update --allow-releaseinfo-change
 
-- name: apt remove avahi-daemon
+- name: apt remove nonuse packages
   apt:
     name: avahi-daemon
     state: absent
     purge: yes
+    autoremove: yes
