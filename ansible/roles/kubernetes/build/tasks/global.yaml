@@ -103,3 +103,12 @@
       when:
         - "'worker' in group_names"
   when: kubelet_result.stat.exists == false
+- name: enable kubelet use swapfile
+  lineinfile:
+    dest: /var/lib/kubelet/config.yaml
+    line: "failSwapOn: false"
+- name: kubelet daemon-reload
+  systemd:
+    name: kubelet
+    daemon_reload: yes
+    state: restarted

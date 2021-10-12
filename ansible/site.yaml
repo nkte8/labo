@@ -41,3 +41,8 @@
   become: true
   roles:
     - camera
+
+- hosts: all
+  become: true
+  roles:
+    - swapon

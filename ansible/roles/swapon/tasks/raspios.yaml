@@ -1,0 +1,16 @@
+---
+- name: edit dphys-swapfile config
+  replace:
+    path: /etc/dphys-swapfile
+    regexp: "{{ item.regexp }}"
+    replace: "{{ item.line }}"
+  with_items:
+    - { regexp: "^.?CONF_SWAPFILE.*", line: "CONF_SWAPFILE=/var/swap" }
+    - { regexp: "^.?CONF_SWAPSIZE.*", line: "CONF_SWAPSIZE=256" }
+# raspberrypi os swap managed by dphys-swapfile
+- name: enable dphys-swapfile
+  systemd:
+    name: dphys-swapfile
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
