@@ -18,6 +18,10 @@
         name: gitlab-ce=13.11.4-ce.0
         update_cache: yes
   when: '"gitlab-ce" not in ansible_facts.packages'
+- name: check gitlab.rb exists
+  stat:
+    path: /etc/gitlab/gitlab.rb
+  register: diff_ex
 - name: present gitlab.rb as temp
   copy:
     src: gitlab.rb
@@ -43,32 +47,33 @@
             opts: defaults,nofail
             state: mounted
       when: uuid.changed
-    - name: delete backup_path line from gitlab.rb
+    - name: edit gitlab.rb backup_path
       lineinfile:
         dest: "/etc/gitlab/gitlab.rb.tmp"
         regexp: "^gitlab_rails.'backup_path'."
         state: absent
       when: not uuid.changed
-
-- name: edit gitlab.rb zone-info
-  replace:
-    path: /etc/gitlab/gitlab.rb.tmp
-    regexp: "__ZONE_NAME"
-    replace: "{{ global_zonename }}"
-
-- name: check gitlab.rb renewed
-  shell: diff /etc/gitlab/gitlab.rb.tmp /etc/gitlab/gitlab.rb > /dev/null
-  register: gitlab_rb
-  changed_when: gitlab_rb.rc == 1
-  failed_when: gitlab_rb.rc == 2
-## リモートとローカルのrbが異なる場合はreconfigure
 - block:
-    - name: renew gitlab.rb
+    - name: edit gitlab.rb zone-info
+      replace:
+        path: /etc/gitlab/gitlab.rb.tmp
+        regexp: "__ZONE_NAME"
+        replace: "{{ global_zonename }}"
+    - name: check network-setting renewed
+      shell: diff /etc/gitlab/gitlab.rb.tmp /etc/gitlab/gitlab.rb > /dev/null
+      register: diff_ch
+      changed_when: diff_ch.rc == 1
+      failed_when: diff_ch.rc == 2
+      when: diff_ex.stat.exists
+    - name: renew gitlab.rb if changed
       shell: cp /etc/gitlab/gitlab.rb.tmp /etc/gitlab/gitlab.rb
-    - name: gitlab reconfigure
-      shell: gitlab-ctl reconfigure
-  when: gitlab_rb.changed
-- name: clear temp file
-  file:
-    path: /etc/gitlab/gitlab.rb.tmp
-    state: absent
+      register: diff_renew
+      changed_when: true
+      when: not diff_ex.stat.exists or diff_ch.changed
+    - name: clear temp file
+      file:
+        path: /etc/gitlab/gitlab.rb.tmp
+        state: absent
+- name: gitlab reconfigure
+  shell: gitlab-ctl reconfigure
+  when: diff_renew.changed
