@@ -33,4 +33,5 @@
     - name: gitlab start
       shell: |-
         gitlab-ctl start
+        gitlab-ctl reconfigure
   when: bk_slug != ""
