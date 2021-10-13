@@ -12,8 +12,7 @@ spec:
       labels:
         name: container-builder
     spec:
-      nodeSelector:
-        interface: ethernet
+      terminationGracePeriodSeconds: 100
       initContainers:
         - name: init-runner
           image: gitlab/gitlab-runner:latest
