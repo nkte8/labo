@@ -7,11 +7,13 @@
 
 - name: check backup exists in backup_path
   shell: |-
-    ls -rt -1 {{ bk_path.stdout }} | grep .tar
+    ls -rt -1 {{ bk_path.stdout }} | grep .tar | tail -1
   register: bk_name
   changed_when: bk_name.rc != 0
-  when: not bk_path.changed
-
+  when: bk_path.changed
+- name: set tarball name
+  set_fact:
+    bk_slug: "{{ bk_name.stdout | regex_replace('^(.*)_gitlab_backup.*' , '\\1') }}"
 - block:
     - name: stop gitlab db connection
       shell: |-
@@ -20,9 +22,8 @@
     - name: restore gitlab
       shell: |-
         cd {{ bk_path.stdout }}
-        cp -a gitlab-secrets.json /etc/gitlab/ && \
-        GITLAB_ASSUME_YES=1 gitlab-backup restore 
-        BACKUP="{{ bk_name.stdout | regex_replace('^(.*)_gitlab_backup.*' , '\\1') }}"
+        cp -a gitlab-secrets.json /etc/gitlab/
+        GITLAB_ASSUME_YES=1 gitlab-backup restore BACKUP={{ bk_slug }}
     - name: remove restored debris
       shell: |-
         cd {{ bk_path.stdout }}
@@ -33,4 +34,4 @@
       shell: |-
         gitlab-ctl reconfigure
         gitlab-ctl start
-  when: bk_name.stdout != ""
+  when: bk_slug != ""
