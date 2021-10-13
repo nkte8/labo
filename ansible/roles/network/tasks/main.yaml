@@ -2,6 +2,8 @@
 # - include: "global.yaml"
 
 - include: "ubuntu.yaml"
-  when: "ansible_distribution == 'Ubuntu'"
+  when:
+    - ansible_distribution == 'Ubuntu'
+    - network_config is defined
 # - include: "raspio.yaml"
 #   when: "ansible_distribution == 'Debian'"

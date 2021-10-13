@@ -1,8 +1,5 @@
 ---
 - include: "global.yaml"
-
-- include: "raspios.yaml"
-  when:
-    - "ansible_distribution == 'Debian'"
-    - "use_swapfile is defined"
-    - "use_swapfile"
+# - include: "raspios.yaml"
+#   when:
+#     - "ansible_distribution == 'Debian'"

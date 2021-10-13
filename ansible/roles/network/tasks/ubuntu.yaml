@@ -1,27 +1,27 @@
 ---
-- name: check ansible_setting enabled
+- name: check network-setting exists
   stat:
     path: /etc/netplan/90-ansible-config.yaml
-  register: ansibleconf_enable
+  register: diff_ex
+- name: present network-config as temp
+  copy:
+    src: files/{{ network_config }}.yaml
+    dest: /etc/netplan/90-ansible-config.yaml.tmp
+    owner: root
+    group: root
+    mode: "u=rw,g=r,o=r"
 - block:
-    - name: present network configuration
-      copy:
-        src: files/wifi.yaml
-        dest: /etc/netplan/90-ansible-config.yaml
-        owner: root
-        group: root
-        mode: "u=rw,g=r,o=r"
-    - name: stat 50-cloud-init.yaml
+    - name: stat old network-config
       stat:
         path: /etc/netplan/50-cloud-init.yaml
       register: first_conf
-    - name: disable first configuration
+    - name: disable old network-config
       command: mv /etc/netplan/50-cloud-init.yaml /etc/netplan/50-cloud-init.yaml.bak
       when: first_conf.stat.exists
-
-    - name: configure 90-ansible-config.yaml for masters
+- block:
+    - name: configure network-setting
       replace:
-        path: /etc/netplan/90-ansible-config.yaml
+        path: /etc/netplan/90-ansible-config.yaml.tmp
         regexp: "{{ item.regexp }}"
         replace: "{{ item.line }}"
       with_items:
@@ -29,6 +29,22 @@
         - { regexp: "__WIFI_PASSWD", line: "{{ global_wifi_passwd }}" }
         - { regexp: "__IPADDRESS", line: "{{ ansible_host }}/24" }
         - { regexp: "__DOMAIN", line: "{{ global_zonename }}" }
+    - name: check network-setting renewed
+      shell: diff /etc/netplan/90-ansible-config.yaml.tmp /etc/netplan/90-ansible-config.yaml > /dev/null
+      register: diff_ch
+      changed_when: diff_ch.rc == 1
+      failed_when: diff_ch.rc == 2
+      when: diff_ex.stat.exists
+    - name: renew network-setting if changed
+      shell: cp /etc/netplan/90-ansible-config.yaml.tmp /etc/netplan/90-ansible-config.yaml
+      register: diff_renew
+      changed_when: true
+      when: not diff_ex.stat.exists or diff_ch.changed
+    - name: clear temp file
+      file:
+        path: /etc/netplan/90-ansible-config.yaml.tmp
+        state: absent
+- block:
     - name: apply setting
       shell: netplan apply
       async: 1
@@ -38,4 +54,4 @@
       wait_for_connection:
         delay: 30
         timeout: 300
-  when: not ansibleconf_enable.stat.exists
+  when: diff_renew.changed

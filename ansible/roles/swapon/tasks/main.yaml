@@ -1,0 +1,11 @@
+---
+- block:
+    - include: "raspios.yaml"
+      when:
+        - "ansible_distribution == 'Debian'"
+      # - include: "ubuntu.yaml"
+      # when:
+      #   - "ansible_distribution == 'Ubuntu'"
+  when:
+    - "use_swapfile is defined"
+    - "use_swapfile"
