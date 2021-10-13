@@ -33,7 +33,7 @@ write_files:
       dtparam=pwr_led_trigger=panic
 
 runcmd:
-  - useradd -m -U -u 1001 -s /bin/bash -G sudo __USERNAME
+  - useradd -m -U -u 1001 -s /bin/bash -G sudo,video __USERNAME
   - sh -c 'echo __USERNAME:__USERNAME | chpasswd'
   - mkdir /home/__USERNAME/.ssh
   - echo '__AUTHKEY' | tee /home/__USERNAME/.ssh/authorized_keys
