@@ -3,6 +3,7 @@
   roles:
     - common
     - resolv
+    - network
 
 - hosts: master
   become: true
