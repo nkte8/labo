@@ -1,0 +1,36 @@
+---
+- name: get backup_path from gitlab.rb
+  shell: |-
+    grep -e "^gitlab_rails.'backup_path'." /etc/gitlab/gitlab.rb | awk -F\' '{ print $4 }'
+  register: bk_path
+  changed_when: bk_path.stdout != ""
+
+- name: check backup exists in backup_path
+  shell: |-
+    ls -rt -1 {{ bk_path.stdout }} | grep .tar
+  register: bk_name
+  changed_when: bk_name.rc != 0
+  when: not bk_path.changed
+
+- block:
+    - name: stop gitlab db connection
+      shell: |-
+        gitlab-ctl stop puma
+        gitlab-ctl stop sidekiq
+    - name: restore gitlab
+      shell: |-
+        cd {{ bk_path.stdout }}
+        cp -a gitlab-secrets.json /etc/gitlab/ && \
+        GITLAB_ASSUME_YES=1 gitlab-backup restore 
+        BACKUP="{{ bk_name.stdout | regex_replace('^(.*)_gitlab_backup.*' , '\\1') }}"
+    - name: remove restored debris
+      shell: |-
+        cd {{ bk_path.stdout }}
+        find -name '*.tar.gz' -print0 | xargs -0 rm -f
+        find -maxdepth 1 -mindepth 1 -type d -print0 | xargs -0 rm -rf
+        rm -f backup_information.yml
+    - name: gitlab reconfigure
+      shell: |-
+        gitlab-ctl reconfigure
+        gitlab-ctl start
+  when: bk_name.stdout != ""
