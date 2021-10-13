@@ -5,10 +5,12 @@
     - resolv
     - network
 
-- hosts: master
+## DNSサーバ
+- hosts: infra
   become: true
   roles:
-    - keepalive
+    - bind9
+    - gitlab
 
 - hosts: gluster
   become: true
@@ -16,12 +18,10 @@
     - keepalive
     - glusterfs/server
 
-## DNSサーバ
-- hosts: infra
+- hosts: master
   become: true
   roles:
-    - bind9
-    - gitlab
+    - keepalive
 
 - hosts: kubernetes
   become: true
