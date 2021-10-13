@@ -8,8 +8,7 @@ if [[ ${skip} != "y" ]];then
     PUBKEY=$(cat `find ~/.ssh -name '*.pub' | head -n 1`)
 
     sed "s/__IP_ADDRESS/${W_IP}/g" ./network-config.base > ./network-config
-    sed "s/__USERNAME/${UNAME}/g" ./user-data.base > ./user-data
-    sed "s/__AUTHKEY${PUBKEY}/g" ./user-data.base > ./user-data
+    sed "s/__USERNAME/${UNAME}/g" ./user-data.base | sed "s/__AUTHKEY/${PUBKEY}/g"  > ./user-data
 fi
 
 read -p "Input /boot volume: " B_VOL
