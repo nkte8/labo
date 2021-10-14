@@ -7,7 +7,7 @@ all:
         infra01:
           ansible_host: "192.168.3.250"
           network_config: "bind"
-          gitlab_restore: true
+          gitlab_restore: false
     kubernetes:
       children:
         master:
