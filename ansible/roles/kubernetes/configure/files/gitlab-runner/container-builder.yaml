@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: container-builder
 spec:
-  replicas: 4
+  replicas: 3
   selector:
     matchLabels:
       name: container-builder
@@ -28,7 +28,7 @@ spec:
             - --docker-image=docker:latest
             - --docker-network-mode=host
             - --docker-volumes=/var/run/docker.sock:/var/run/docker.sock
-            # - --docker-extra-hosts=gitlab.neko.lab:192.168.3.250
+            - --docker-extra-hosts=gitlab.neko.lab:192.168.3.250
           volumeMounts:
             - name: config
               readOnly: false
