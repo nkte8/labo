@@ -2,6 +2,11 @@ all:
   vars:
     first_master: master01
   children:
+    sandbox:
+      hosts:
+        sandbox:
+          ansible_host: "192.168.3.100"
+          network_config: "bind"
     infra:
       hosts:
         infra01:
