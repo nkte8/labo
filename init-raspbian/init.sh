@@ -47,6 +47,7 @@ sudo chmod 440 /etc/sudoers.d/099_${USERNAME}-nopasswd
 sudo sed -i -e 's/$/ cgroup_enable=memory cgroup_memory=1 net.ifnames=0 dwc_otg.lpm_enable=0/' /boot/cmdline.txt
 sudo passwd -d pi
 sudo systemctl disable avahi-daemon 
+echo 'disable_camera_led=1' | sudo tee /boot/config.txt
 sudo reboot"
 
 echo "you can access 'ssh ${USERNAME}@${W_IP}' with public-key ${W_PUB_PATH}"
