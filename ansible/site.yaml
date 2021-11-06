@@ -38,6 +38,7 @@
   roles:
     - network
     - docker
+    - docker-compose
 
 - hosts: camera
   become: true
