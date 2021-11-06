@@ -36,7 +36,6 @@
 - hosts: edge
   become: true
   roles:
-    - network
     - docker
     - docker-compose
 
