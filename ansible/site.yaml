@@ -5,6 +5,13 @@
     - resolv
     - network
 
+- hosts: sandbox
+  become: true
+  roles:
+    - glusterfs/client
+    - docker
+    - camera
+
 ## DNSサーバ
 - hosts: infra
   become: true
