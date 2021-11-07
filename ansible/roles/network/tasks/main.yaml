@@ -5,5 +5,6 @@
   when:
     - ansible_distribution == 'Ubuntu'
     - network_config is defined
-# - include: "raspio.yaml"
-#   when: "ansible_distribution == 'Debian'"
+
+- include: "raspios.yaml"
+  when: "ansible_distribution == 'Debian'"

@@ -3,7 +3,7 @@ FROM ubuntu:20.04
 # https://storage.googleapis.com/kubernetes-release/release/v1.22.0/bin/linux/amd64/kubectl
 RUN apt-get update && \
 apt-get install -y wget && \
-apt-get clean
+apt-get autoclean
 
 RUN wget https://storage.googleapis.com/kubernetes-release/release/v1.21.4/bin/linux/arm64/kubectl && \
 mv kubectl /usr/local/bin && \

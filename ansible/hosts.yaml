@@ -29,9 +29,20 @@ all:
                 node03:
                   ansible_host: "192.168.3.23"
     edge:
+      hosts:
+        edge07:
+          ansible_host: "192.168.3.37"
+          use_swapfile: true
       children:
         camera:
           hosts:
             edge01:
               ansible_host: "192.168.3.31"
               use_swapfile: true
+            edge06:
+              ansible_host: "192.168.3.36"
+              use_swapfile: true
+
+          # edge02:
+          #   ansible_host: "192.168.3.32"
+          #   use_swapfile: true

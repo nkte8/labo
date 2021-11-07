@@ -1,0 +1,16 @@
+---
+- name: present reconnect.sh
+  copy:
+    src: reconnect.sh
+    dest: /usr/local/bin/reconnect
+    owner: root
+    group: root
+    mode: "u=rwx,g=rx,o=rx"
+
+- name: setup cron wifi-reconnect
+  cron:
+    name: auto wifi reconnect
+    cron_file: reconnect-wifi
+    job: "/usr/local/bin/reconnect"
+    state: present
+    user: root

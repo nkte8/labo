@@ -1,0 +1,4 @@
+---
+- name: add docker.io
+  apt:
+    name: docker-compose
