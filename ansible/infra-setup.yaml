@@ -1,0 +1,7 @@
+## DNSサーバ
+- hosts: infra
+  become: true
+  roles:
+    - bind9
+    - gitlab
+    - glusterfs/client

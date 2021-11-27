@@ -5,52 +5,11 @@
     - resolv
     - network
 
-- hosts: sandbox
-  become: true
-  roles:
-    - glusterfs/client
-    - docker
-    - docker-compose
-    - camera
-
-## DNSサーバ
-- hosts: infra
-  become: true
-  roles:
-    - bind9
-    - gitlab
-    - glusterfs/client
-
-- hosts: gluster
-  become: true
-  roles:
-    - keepalive
-    - glusterfs/server
-
-- hosts: master
-  become: true
-  roles:
-    - keepalive
-
-- hosts: kubernetes
-  become: true
-  roles:
-    - glusterfs/client
-    - docker
-    - kubernetes/install
-    - kubernetes/build
-    - { role: kubernetes/configure, when: "inventory_hostname == first_master" }
-
-- hosts: edge
-  become: true
-  roles:
-    - docker
-    - docker-compose
-
-- hosts: camera
-  become: true
-  roles:
-    - camera
+- import_playbook: sandbox-setup.yaml
+- import_playbook: infra-setup.yaml
+- import_playbook: gluster-setup.yaml
+- import_playbook: k8s-setup.yaml
+- import_playbook: edges-setup.yaml
 
 - hosts: all
   become: true

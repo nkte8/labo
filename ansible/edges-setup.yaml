@@ -1,0 +1,10 @@
+- hosts: edge
+  become: true
+  roles:
+    - docker
+    - docker-compose
+
+- hosts: camera
+  become: true
+  roles:
+    - camera
