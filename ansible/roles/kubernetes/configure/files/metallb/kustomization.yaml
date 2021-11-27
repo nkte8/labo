@@ -6,4 +6,11 @@ namespace: metallb-system
 resources:
   - namespace.yaml
   - metallb.yaml
-  - config.yaml
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+configMapGenerator:
+  - name: config
+    files:
+      - config=configs.yaml

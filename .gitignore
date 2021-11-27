@@ -3,6 +3,7 @@
 ansible/admin.conf
 ansible/init/*.csr
 ansible/roles/kubernetes/build/files/pki/*
+ansible/roles/kubernetes/configure/files/metallb/configs.yaml
 ansible/group_vars/*.yaml
 ansible/debug.yaml
 ansible/roles/bind9/files/named.zone

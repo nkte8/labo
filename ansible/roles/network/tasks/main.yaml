@@ -7,4 +7,6 @@
     - network_config is defined
 
 - include: "raspios.yaml"
-  when: "ansible_distribution == 'Debian'"
+  when:
+    - "ansible_distribution == 'Debian'"
+    - network_config is defined

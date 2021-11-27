@@ -3,5 +3,5 @@ kind: CronJob
 metadata:
   name: descheduler-cronjob
 spec:
-  schedule: "0 */1 * * *"
+  schedule: "*/5 * * * *"
   successfulJobsHistoryLimit: 5

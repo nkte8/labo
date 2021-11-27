@@ -1,0 +1,13 @@
+- hosts: master
+  become: true
+  roles:
+    - keepalive
+
+- hosts: kubernetes
+  become: true
+  roles:
+    - glusterfs/client
+    - docker
+    - kubernetes/install
+    - kubernetes/build
+    - { role: kubernetes/configure, when: "inventory_hostname == first_master" }
