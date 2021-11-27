@@ -49,6 +49,10 @@ all:
               ansible_host: "192.168.3.32"
               use_swapfile: true
               network_config: "wifi"
+            edge03:
+              ansible_host: "192.168.3.33"
+              use_swapfile: true
+              network_config: "wifi"
             edge06:
               ansible_host: "192.168.3.36"
               use_swapfile: true
