@@ -2,3 +2,9 @@
 - include: "global.yaml"
 # - include: "raspios.yaml"
 #   when: "ansible_distribution == 'Debian'"
+
+# - include: "aarch64.yaml"
+#   when: "ansible_architecture == 'aarch64'"
+
+# - include: "armv6l.yaml"
+#   when: "ansible_architecture == 'armv6l'"
