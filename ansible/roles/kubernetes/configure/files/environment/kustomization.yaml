@@ -3,9 +3,4 @@ kind: Kustomization
 namespace: descheduler
 
 resources:
-  - namespace.yaml
-  - base
-  - cronjob/cronjob.yaml
-
-patchesStrategicMerge:
-  - croncustom.yaml
+  - glusterfs-endpoint.yaml

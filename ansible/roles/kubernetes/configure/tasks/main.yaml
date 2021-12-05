@@ -36,7 +36,7 @@
       failed_when: metallb.rc >= 2
     - name: apply metallb to cluster
       shell: |-
-        kubectl apply -k ~/manifests/metallb
+        kubectl apply -k ~/manifests/metallb/overlay
         kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
       when: metallb.rc != 0
 - block:
@@ -45,10 +45,10 @@
         kubectl apply -k ~/manifests/gitlab-runner
     - name: apply glusterfs-endpoints to cluster
       shell: |-
-        kubectl apply -f ~/manifests/glusterfs-endpoint.yaml
+        kubectl apply -k ~/manifests/environment
     - name: apply descheduler to cluster
       shell: |-
-        kubectl apply -k ~/manifests/descheduler
+        kubectl apply -k ~/manifests/descheduler/overlay
     - name: apply metrics-server to cluster
       shell: |-
         kubectl apply -k ~/manifests/metrics-server

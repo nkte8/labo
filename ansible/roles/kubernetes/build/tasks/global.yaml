@@ -80,7 +80,7 @@
         dest: ~/manifests/
     - name: apply CNI to cluster
       shell: |-
-        kubectl apply -k ~/manifests/calico && \
+        kubectl apply -k ~/manifests/calico/overlay && \
         sleep 100s
   when: "inventory_hostname == first_master"
 

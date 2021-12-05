@@ -1,0 +1,30 @@
+$TTL 86400
+@   IN  SOA     neko.lab. root.neko.lab (
+        2021032501  ;Serial
+        3600        ;Refresh
+        1800        ;Retry
+        604800      ;Expire
+        86400       ;Minimum TTL
+)
+            IN  NS      ns.neko.lab.
+            IN  A       192.168.3.250;
+ns          IN  A       192.168.3.250;
+infra       IN  A       192.168.3.250;
+gitlab      IN  A       192.168.3.250;
+registry    IN  A       192.168.3.250;
+master      IN  A       192.168.3.10;
+master01    IN  A       192.168.3.11;
+master02    IN  A       192.168.3.12;
+master03    IN  A       192.168.3.13;
+gluster     IN  A       192.168.3.20;
+node01      IN  A       192.168.3.21;
+node02      IN  A       192.168.3.22;
+node03      IN  A       192.168.3.23;
+edge01      IN  A       192.168.3.31;
+edge02      IN  A       192.168.3.32;
+edge03      IN  A       192.168.3.33;
+edge06      IN  A       192.168.3.36;
+edge07      IN  A       192.168.3.37;
+sandbox     IN  A       192.168.3.100;
+samba       IN  A       192.168.3.201;
+monit       IN  A       192.168.3.210;
