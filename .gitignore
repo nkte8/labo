@@ -1,8 +1,8 @@
 .DS_Store
 **/.DS_Store
 ansible/admin.conf
-ansible/init/*.csr
-ansible/roles/kubernetes/build/files/pki/*
+**/*.crt
+**/*.key
 ansible/roles/kubernetes/configure/files/metallb/configs.yaml
 ansible/group_vars/*.yaml
 ansible/debug.yaml
