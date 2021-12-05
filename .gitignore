@@ -3,10 +3,8 @@
 ansible/admin.conf
 **/*.crt
 **/*.key
-ansible/roles/kubernetes/configure/files/metallb/configs.yaml
 ansible/group_vars/*.yaml
 ansible/debug.yaml
-ansible/roles/bind9/files/named.zone
 init-raspbian/wpa_supplicant.conf
 init-ubuntu/network-config
 init-ubuntu/user-data

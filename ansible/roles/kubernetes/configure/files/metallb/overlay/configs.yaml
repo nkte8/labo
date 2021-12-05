@@ -1,0 +1,21 @@
+address-pools:
+  - name: default
+    protocol: layer2
+    addresses:
+      - 192.168.3.220-192.168.3.229
+  - name: timemachine-server
+    protocol: layer2
+    addresses:
+      - 192.168.3.200-192.168.3.200
+  - name: data-server
+    protocol: layer2
+    addresses:
+      - 192.168.3.201-192.168.3.201
+  - name: ydl-apiserver
+    protocol: layer2
+    addresses:
+      - 192.168.3.202-192.168.3.202
+  - name: monitor
+    protocol: layer2
+    addresses:
+      - 192.168.3.210-192.168.3.210

@@ -3,6 +3,3 @@ kind: Kustomization
 
 resources:
   - ./calico.yaml
-
-patchesStrategicMerge:
-  - ./overlay.yaml
