@@ -20,6 +20,7 @@ gluster     IN  A       192.168.3.20;
 node01      IN  A       192.168.3.21;
 node02      IN  A       192.168.3.22;
 node03      IN  A       192.168.3.23;
+node05      IN  A       192.168.3.25;
 edge01      IN  A       192.168.3.31;
 edge02      IN  A       192.168.3.32;
 edge03      IN  A       192.168.3.33;
