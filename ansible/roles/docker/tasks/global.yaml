@@ -5,19 +5,36 @@
 - block:
     - name: present daemon.json
       copy:
-        src: daemon.json
-        dest: /etc/docker/
+        src: "{{ board_type }}.json"
+        dest: /etc/docker/daemon.json.tmp
         owner: root
         group: root
         mode: "u=rw,g=r,o=r"
     - name: edit daemon.json zone-info for {{ global_zonename }}
       replace:
-        path: /etc/docker/daemon.json
+        path: /etc/docker/daemon.json.tmp
         regexp: "__ZONE_NAME"
         replace: "{{ global_zonename }}"
+    - name: check daemon.json renewed
+      shell: |
+        diff /etc/docker/daemon.json.tmp /etc/docker/daemon.json > /dev/null
+      register: diff_ch
+      changed_when: diff_ch.rc != 0
+      failed_when: false
+    - name: renew daemon.json if changed
+      shell: |
+        cp /etc/docker/daemon.json.tmp /etc/docker/daemon.json
+      register: diff_renew
+      changed_when: true
+      when: diff_ch.changed
+    - name: clear temp file
+      file:
+        path: /etc/docker/daemon.json.tmp
+        state: absent
 - name: start docker-daemon
   systemd:
     name: docker
-    state: started
+    state: restarted
     daemon_reload: yes
     enabled: yes
+  when: diff_renew.changed
