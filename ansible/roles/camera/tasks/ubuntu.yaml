@@ -1,12 +1,15 @@
 ---
-- name: get libraspberrypi-bin
-  apt:
-    name: libraspberrypi-bin
-- name: add system config
-  lineinfile:
-    dest: /boot/firmware/config.txt
-    line: "{{ item }}"
-  with_items:
-    - start_x=1
-    - gpu_mem=128
-  register: camera_firmconf
+- block:
+    - name: get libraspberrypi-bin
+      apt:
+        name: libraspberrypi-bin
+    - name: add system config
+      lineinfile:
+        dest: /boot/firmware/config.txt
+        line: "{{ item }}"
+      with_items:
+        - start_x=1
+        - gpu_mem=128
+      register: camera_firmconf
+  when:
+    - "board_type == 'rpi'"

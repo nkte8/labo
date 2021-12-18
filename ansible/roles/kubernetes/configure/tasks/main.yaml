@@ -1,54 +1,63 @@
 ---
+# check kubectl in first_master
 - name: check kubectl enabled
   shell: |
     kubectl get node
   register: kubectl_check
   failed_when: kubectl_check.rc != 0
+  when: "inventory_hostname == first_master"
 
+# - name: quit if kubectl disabled
+#   fail:
+#     msg: cluster did not working
+#   when:
+#     - kubectl_check.rc != 0
+
+# kubectl label(exec multihost, delegate to first_master)
 - block:
-    - name: set storage=gluster label
+    - name: set storage label
       shell: |
-        kubectl label nodes "{{ item }}" storage=gluster
-      with_items: "{{ groups['gluster'] }}"
+        kubectl label nodes {{ inventory_hostname }} storage=gluster
+      delegate_to: "{{ first_master }}"
       register: label
       failed_when: label.rc >= 2
-    # - name: set interface=ethernet label
-    #   shell: |
-    #     kubectl label nodes "{{ item }}" interface=ethernet
-    #   with_items: "{{ groups['ethernet'] }}"
-    #   register: label
-    #   failed_when: label.rc >= 2
-    # - name: set device=camera label
-    #   shell: |
-    #     kubectl label nodes "{{ item }}" device=camera
-    #   with_items: "{{ groups['camera'] }}"
-    #   register: label
-    #   failed_when: label.rc >= 2
-- name: present configure files
-  copy:
-    src: ./
-    dest: ~/manifests
+      when: "'gluster' in group_names"
+    - name: set gpu_type label
+      shell: |
+        kubectl label nodes {{ inventory_hostname }} gpu_type={{ gpu_type }}
+      delegate_to: "{{ first_master }}"
+      register: label
+      failed_when: label.rc >= 2
+      when: gpu_type is defined
+
+# kubectl apply(only exec in first_master)
 - block:
-    - name: metallb check
-      shell: |-
-        kubectl get -k ~/manifests/metallb
-      register: metallb
-      failed_when: metallb.rc >= 2
-    - name: apply metallb to cluster
-      shell: |-
-        kubectl apply -k ~/manifests/metallb/overlay
-        kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
-      when: metallb.rc != 0
-- block:
-    - name: apply gitlab-runner to cluster
-      shell: |-
-        kubectl apply -k ~/manifests/gitlab-runner
-    - name: apply glusterfs-endpoints to cluster
-      shell: |-
-        kubectl apply -k ~/manifests/environment
-    - name: apply descheduler to cluster
-      shell: |-
-        kubectl apply -k ~/manifests/descheduler/overlay
-    - name: apply metrics-server to cluster
-      shell: |-
-        kubectl apply -k ~/manifests/metrics-server
+    - name: present configure files
+      copy:
+        src: ./
+        dest: ~/manifests
+    - block:
+        - name: metallb check
+          shell: |-
+            kubectl get -k ~/manifests/metallb
+          register: metallb
+          failed_when: metallb.rc >= 2
+        - name: apply metallb to cluster
+          shell: |-
+            kubectl apply -k ~/manifests/metallb/overlay
+            kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
+          when: metallb.rc != 0
+    - block:
+        - name: apply gitlab-runner to cluster
+          shell: |-
+            kubectl apply -k ~/manifests/gitlab-runner
+        - name: apply glusterfs-endpoints to cluster
+          shell: |-
+            kubectl apply -k ~/manifests/environment
+        - name: apply descheduler to cluster
+          shell: |-
+            kubectl apply -k ~/manifests/descheduler/overlay
+        - name: apply metrics-server to cluster
+          shell: |-
+            kubectl apply -k ~/manifests/metrics-server
+  when: "inventory_hostname == first_master"

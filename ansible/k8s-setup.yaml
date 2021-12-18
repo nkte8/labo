@@ -10,4 +10,4 @@
     - docker
     - kubernetes/install
     - kubernetes/build
-    - { role: kubernetes/configure, when: "inventory_hostname == first_master" }
+    - kubernetes/configure

@@ -4,12 +4,14 @@ all:
   hosts:
     sandbox:
       ansible_host: "192.168.3.100"
+      board_type: rpi
       network_config: "wifi"
   children:
     infra:
       hosts:
         infra01:
           ansible_host: "192.168.3.250"
+          board_type: rpi
           network_config: "bind"
           gitlab_restore: false
     kubernetes:
@@ -18,45 +20,47 @@ all:
           hosts:
             master01:
               ansible_host: "192.168.3.11"
+              board_type: rpi
             master02:
               ansible_host: "192.168.3.12"
+              board_type: rpi
             master03:
               ansible_host: "192.168.3.13"
+              board_type: rpi
         worker:
           children:
             gluster:
               hosts:
                 node01:
                   ansible_host: "192.168.3.21"
+                  board_type: rpi
                 node02:
                   ansible_host: "192.168.3.22"
+                  board_type: rpi
                 node03:
                   ansible_host: "192.168.3.23"
+                  board_type: rpi
+          hosts:
+            node05:
+              ansible_host: "192.168.3.25"
+              board_type: jetson
+              gpu_type: ndivia
     edge:
+      vars:
+        board_type: rpi
+        use_swapfile: true
+        network_config: "wifi"
       hosts:
         edge07:
           ansible_host: "192.168.3.37"
-          use_swapfile: true
-          network_config: "wifi"
       children:
         camera:
           hosts:
             edge01:
               ansible_host: "192.168.3.31"
-              use_swapfile: true
-              network_config: "wifi"
             edge02:
               ansible_host: "192.168.3.32"
-              use_swapfile: true
-              network_config: "wifi"
             edge03:
               ansible_host: "192.168.3.33"
-              use_swapfile: true
-              network_config: "wifi"
             edge06:
               ansible_host: "192.168.3.36"
-              use_swapfile: true
-              network_config: "wifi"
-          # edge02:
-          #   ansible_host: "192.168.3.32"
-          #   use_swapfile: true

@@ -1,23 +1,26 @@
 ---
-- name: check camera isenabled
-  shell: |
-    vcgencmd get_camera | cut -d " " -f 1
-  register: check_camera
-  changed_when: check_camera.stdout != "supported=1"
 - block:
-    - name: reboot for apply firmware config.txt
-      shell: reboot
-      async: 1
-      poll: 0
-      ignore_errors: true
-    - name: wait for reboot
-      wait_for_connection:
-        delay: 30
-        timeout: 300
-    - name: check camera enabled
+    - name: check camera isenabled
       shell: |
         vcgencmd get_camera | cut -d " " -f 1
       register: check_camera
-      failed_when: check_camera.stdout != "supported=1"
-      changed_when: false
-  when: check_camera.changed or (camera_firmconf is defined and camera_firmconf.changed)
+      changed_when: check_camera.stdout != "supported=1"
+    - block:
+        - name: reboot for apply firmware config.txt
+          shell: reboot
+          async: 1
+          poll: 0
+          ignore_errors: true
+        - name: wait for reboot
+          wait_for_connection:
+            delay: 30
+            timeout: 300
+        - name: check camera enabled
+          shell: |
+            vcgencmd get_camera | cut -d " " -f 1
+          register: check_camera
+          failed_when: check_camera.stdout != "supported=1"
+          changed_when: false
+      when: check_camera.changed or (camera_firmconf is defined and camera_firmconf.changed)
+  when:
+    - "board_type == 'rpi'"
