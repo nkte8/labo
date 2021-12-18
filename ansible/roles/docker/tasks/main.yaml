@@ -1,8 +1,11 @@
 ---
-- include: "global.yaml"
 # - include: "raspios.yaml"
 #   when: "ansible_distribution == 'Debian'"
 
+- include: "ubuntu.yaml"
+  when: "ansible_distribution == 'Ubuntu'"
+
+- include: "global.yaml"
 # - include: "aarch64.yaml"
 #   when: "ansible_architecture == 'aarch64'"
 

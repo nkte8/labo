@@ -1,26 +1,37 @@
 ---
-- name: set firmware configs
-  lineinfile:
-    dest: /boot/firmware/config.txt
-    line: "{{ item }}"
-  with_items:
-    - temp_limit=70
-    - arm_freq=1200
-    - over_voltage=5
-  register: firm_configs
 - block:
-    - name: reboot for apply firmware config.txt
-      shell: reboot
-      async: 1
-      poll: 0
-      ignore_errors: true
-      changed_when: false
-    - name: wait for reboot
-      wait_for_connection:
-        delay: 30
-        timeout: 300
-  when: firm_configs.changed
+    - name: set firmware configs
+      lineinfile:
+        dest: /boot/firmware/config.txt
+        line: "{{ item }}"
+      with_items:
+        - temp_limit=70
+        - arm_freq=1200
+        - over_voltage=5
+      register: firm_configs
+    - block:
+        - name: reboot for apply firmware config.txt
+          shell: reboot
+          async: 1
+          poll: 0
+          ignore_errors: true
+          changed_when: false
+        - name: wait for reboot
+          wait_for_connection:
+            delay: 30
+            timeout: 300
+      when: firm_configs.changed
+  when:
+    - "board_type == 'rpi'"
+
 - name: update and remove nonuse packages
   apt:
     update_cache: yes
+    autoremove: yes
+
+- name: apt remove nonuse packages
+  apt:
+    name: avahi-daemon
+    state: absent
+    purge: yes
     autoremove: yes
